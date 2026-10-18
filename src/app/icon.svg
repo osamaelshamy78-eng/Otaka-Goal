@@ -1,0 +1,5 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64"><rect width="64" height="64" rx="15" fill="#0E2A33"/><clipPath id="a"><circle cx="32" cy="32" r="20"/></clipPath>
+  <circle cx="32" cy="32" r="20" fill="#F4F8F7"/>
+  <g clip-path="url(#a)" fill="#0E2A33" stroke="#0E2A33" stroke-width="1.50" stroke-linejoin="round" stroke-linecap="round">
+    <path d="M32 24.6L39.04 29.71L36.35 37.99L27.65 37.99L24.96 29.71Z"/><path d="M32 18.2L26.1 13.92L28.36 6.98L35.64 6.98L37.9 13.92ZM45.12 27.74L47.38 20.8L54.66 20.8L56.92 27.74L51.02 32.02ZM40.12 43.16L47.4 43.16L49.66 50.1L43.76 54.38L37.86 50.1ZM23.88 43.16L26.14 50.1L20.24 54.38L14.34 50.1L16.6 43.16ZM18.88 27.74L12.98 32.02L7.08 27.74L9.34 20.8L16.62 20.8Z"/><path d="M32 24.6L32 18.2M37.9 13.92L47.38 20.8M39.04 29.71L45.12 27.74M51.02 32.02L47.4 43.16M36.35 37.99L40.12 43.16M37.86 50.1L26.14 50.1M27.65 37.99L23.88 43.16M16.6 43.16L12.98 32.02M24.96 29.71L18.88 27.74M16.62 20.8L26.1 13.92" fill="none"/></g>
+  <circle cx="32" cy="32" r="19.20" fill="none" stroke="#0E2A33" stroke-width="1.60"/><circle cx="32" cy="32" r="22.5" fill="none" stroke="#3DC598" stroke-width="2.5"/></svg>
