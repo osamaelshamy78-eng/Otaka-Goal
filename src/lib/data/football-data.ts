@@ -1,5 +1,5 @@
 import { unstable_cache } from "next/cache";
-import { knownTeam } from "../teams";
+import { arabicName, knownTeam } from "../teams";
 import { addDays, cairoToday, kickoffDate } from "../time";
 import type { DataProvider, LeagueKey, Match, MatchDetail, MatchEvent, Status, Team } from "../types";
 import { PlanLimitError } from "./api-football";
@@ -46,7 +46,7 @@ function toTeam(t: FdTeam): Team {
   return {
     id: `fd${t.id}`,
     code: known?.[0] ?? t.tla ?? en.slice(0, 3).toUpperCase(),
-    name: { ar: known?.[1] ?? en, en },
+    name: { ar: arabicName(en, t.name) ?? en, en },
     logo: t.crest,
     color: known?.[3],
     textColor: known?.[4],

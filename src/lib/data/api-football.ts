@@ -1,6 +1,6 @@
 import { unstable_cache } from "next/cache";
 import { leagueByApiId, leagueByKey } from "../leagues";
-import { knownTeam } from "../teams";
+import { arabicName, knownTeam } from "../teams";
 import { cairoToday, seasonFor, TZ } from "../time";
 import type { DataProvider, EventType, MatchDetail, Match, MatchEvent, MatchStat, Status, StatKey, Team } from "../types";
 
@@ -46,7 +46,7 @@ function toTeam(t: ApiTeam): Team {
   return {
     id: String(t.id),
     code: known?.[0] ?? t.name.replace(/[^A-Za-z]/g, "").slice(0, 3).toUpperCase(),
-    name: { ar: known?.[1] ?? t.name, en: t.name },
+    name: { ar: arabicName(t.name) ?? t.name, en: t.name },
     logo: t.logo,
     color: known?.[3],
     textColor: known?.[4],
