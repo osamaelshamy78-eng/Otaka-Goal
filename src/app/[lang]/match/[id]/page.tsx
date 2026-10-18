@@ -5,7 +5,7 @@ import { cache } from "react";
 import { Crest, Form, minuteLabel } from "@/components/bits";
 import { LiveRefresh } from "@/components/LiveRefresh";
 import { Reminder } from "@/components/Reminder";
-import { data } from "@/lib/data";
+import { data, PlanLimitError } from "@/lib/data";
 import { dict, isLang, pick } from "@/lib/i18n";
 import { leagueByKey } from "@/lib/leagues";
 import { formatDay, formatKickoff, kickoffDate } from "@/lib/time";
@@ -13,19 +13,21 @@ import type { Lang, MatchDetail, MatchEvent, StandingRow } from "@/lib/types";
 
 type Props = { params: Promise<{ lang: string; id: string }> };
 
-const load = cache(async (id: string) => {
+// null when the match doesn't exist; "error" or "plan" when it couldn't be loaded
+const load = cache(async (id: string): Promise<MatchDetail | null | "error" | "plan"> => {
   try {
     return await data.match(id);
   } catch (err) {
+    if (err instanceof PlanLimitError) return "plan";
     console.error(err);
-    return null;
+    return "error";
   }
 });
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { lang, id } = await params;
   const m = isLang(lang) ? await load(id) : null;
-  if (!m || !isLang(lang)) return {};
+  if (!m || typeof m === "string" || !isLang(lang)) return {};
   return { title: `${pick(m.home.name, lang)} ${dict(lang).vs} ${pick(m.away.name, lang)}` };
 }
 
@@ -70,6 +72,7 @@ export default async function MatchPage({ params }: Props) {
   const t = dict(lang);
   const m = await load(id);
   if (!m) notFound();
+  if (typeof m === "string") return <main><div className="empty">{m === "plan" ? t.planLimit : t.loadError}</div></main>;
   const league = leagueByKey(m.league);
   const live = m.status === "live" || m.status === "ht";
   const day = kickoffDate(m.kickoff);

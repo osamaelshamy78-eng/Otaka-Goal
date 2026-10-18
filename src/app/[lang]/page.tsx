@@ -2,7 +2,7 @@ import { notFound } from "next/navigation";
 import { LeagueChips, MatchRow } from "@/components/bits";
 import { DayStrip } from "@/components/DayStrip";
 import { LiveRefresh } from "@/components/LiveRefresh";
-import { data } from "@/lib/data";
+import { data, PlanLimitError } from "@/lib/data";
 import { dict, isLang, pick } from "@/lib/i18n";
 import { isLeagueKey, LEAGUES } from "@/lib/leagues";
 import { cairoToday, formatDay, parseDate } from "@/lib/time";
@@ -21,12 +21,15 @@ export default async function MatchesPage({ params, searchParams }: {
   const league = isLeagueKey(sp.league) ? sp.league : "all";
 
   let matches: Match[] = [];
-  let failed = false;
+  let failed: false | "error" | "plan" = false;
   try {
     matches = (await data.fixtures(date)).filter((m) => league === "all" || m.league === league);
   } catch (err) {
-    console.error(err);
-    failed = true;
+    if (err instanceof PlanLimitError) failed = "plan";
+    else {
+      console.error(err);
+      failed = "error";
+    }
   }
   const kind = date < today ? t.results : date > today ? t.fixtures : t.todayMatches;
   const anyLive = matches.some((m) => m.status === "live" || m.status === "ht");
@@ -44,7 +47,7 @@ export default async function MatchesPage({ params, searchParams }: {
           <span>{kind}{matches.length ? ` · ${t.matchCount(matches.length)}` : ""}</span>
         </h1>
         {failed ? (
-          <div className="empty">{t.loadError}</div>
+          <div className="empty">{failed === "plan" ? t.planLimit : t.loadError}</div>
         ) : matches.length === 0 ? (
           <div className="empty">{t.noMatches}</div>
         ) : (
