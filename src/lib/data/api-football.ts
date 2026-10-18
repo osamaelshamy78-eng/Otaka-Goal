@@ -1,3 +1,4 @@
+import { unstable_cache } from "next/cache";
 import { leagueByApiId, leagueByKey } from "../leagues";
 import { knownTeam } from "../teams";
 import { cairoToday, seasonFor, TZ } from "../time";
@@ -16,17 +17,28 @@ interface ApiFixture {
   statistics?: { team: { id: number }; statistics: { type: string; value: number | string | null }[] }[];
 }
 
-async function get<T>(path: string, params: Record<string, string | number>, revalidate: number): Promise<T[]> {
+// The plan doesn't cover this request (e.g. the free plan only serves past seasons).
+export class PlanLimitError extends Error {}
+
+async function request(path: string, query: string): Promise<unknown[]> {
   const key = process.env.API_FOOTBALL_KEY;
   if (!key) throw new Error("API_FOOTBALL_KEY is not set");
-  const url = `${BASE}${path}?${new URLSearchParams(Object.entries(params).map(([k, v]) => [k, String(v)]))}`;
-  const res = await fetch(url, { headers: { "x-apisports-key": key }, next: { revalidate } });
+  const res = await fetch(`${BASE}${path}?${query}`, { headers: { "x-apisports-key": key }, cache: "no-store" });
   if (!res.ok) throw new Error(`API-Football ${path} responded ${res.status}`);
-  const body = (await res.json()) as { response: T[]; errors: unknown };
+  const body = (await res.json()) as { response: unknown[]; errors: unknown };
   // the API reports quota and plan errors in the body with a 200 status
-  const errors = body.errors && typeof body.errors === "object" ? Object.values(body.errors) : [];
+  const errors = body.errors && typeof body.errors === "object" ? Object.values(body.errors).map(String) : [];
+  if (errors.some((e) => /do not have access/i.test(e))) throw new PlanLimitError(errors.join("; "));
   if (errors.length) throw new Error(`API-Football ${path}: ${errors.join("; ")}`);
   return body.response;
+}
+
+// Successful responses are cached for `revalidate` seconds; errors are not, so a
+// rate-limit hit doesn't stick. The free plan allows 10 requests a minute.
+async function get<T>(path: string, params: Record<string, string | number>, revalidate: number): Promise<T[]> {
+  const query = new URLSearchParams(Object.entries(params).map(([k, v]) => [k, String(v)])).toString();
+  const cached = unstable_cache(() => request(path, query), ["api-football", path, query], { revalidate });
+  return (await cached()) as T[];
 }
 
 function toTeam(t: ApiTeam): Team {

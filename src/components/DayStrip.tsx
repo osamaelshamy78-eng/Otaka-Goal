@@ -43,7 +43,7 @@ export function DayStrip({ lang, date, today, league }: { lang: Lang; date: stri
           {[-2, -1, 0, 1, 2].map((o) => {
             const d = addDays(date, o);
             return (
-              <Link key={d} className="day" href={href(d)} aria-current={d === date}>
+              <Link prefetch={false} key={d} className="day" href={href(d)} aria-current={d === date}>
                 <b>{label(d)}</b>
                 <span className="num">{formatDay(d, lang, { day: "numeric", month: "long" })}</span>
               </Link>
@@ -69,7 +69,7 @@ export function DayStrip({ lang, date, today, league }: { lang: Lang; date: stri
               const d = addDays(first, i);
               const cls = ["cd", "num", d < today ? "past" : "", d === today ? "today" : ""].join(" ");
               return (
-                <Link key={d} className={cls} href={href(d)} aria-current={d === date} aria-label={formatDay(d, lang)} onClick={() => setOpen(false)}>
+                <Link prefetch={false} key={d} className={cls} href={href(d)} aria-current={d === date} aria-label={formatDay(d, lang)} onClick={() => setOpen(false)}>
                   {i + 1}
                 </Link>
               );
@@ -77,7 +77,7 @@ export function DayStrip({ lang, date, today, league }: { lang: Lang; date: stri
           </div>
           <div className="calfoot">
             <span>{t.calendarHint}</span>
-            <Link href={href(today)} onClick={() => setOpen(false)}>{t.backToToday}</Link>
+            <Link prefetch={false} href={href(today)} onClick={() => setOpen(false)}>{t.backToToday}</Link>
           </div>
         </div>
       )}

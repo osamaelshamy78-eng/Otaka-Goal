@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
+import { cache } from "react";
 import { Crest, Form, minuteLabel } from "@/components/bits";
 import { LiveRefresh } from "@/components/LiveRefresh";
 import { Reminder } from "@/components/Reminder";
@@ -12,14 +13,14 @@ import type { Lang, MatchDetail, MatchEvent, StandingRow } from "@/lib/types";
 
 type Props = { params: Promise<{ lang: string; id: string }> };
 
-async function load(id: string) {
+const load = cache(async (id: string) => {
   try {
     return await data.match(id);
   } catch (err) {
     console.error(err);
     return null;
   }
-}
+});
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { lang, id } = await params;
@@ -89,7 +90,7 @@ export default async function MatchPage({ params }: Props) {
         <article className="card">
           <div className="ptop">
             <span>{pick(league.name, lang)}{m.round ? ` · ${m.round}` : ""}</span>
-            <Link href={`/${lang}?date=${day}`}>{t.back}</Link>
+            <Link prefetch={false} href={`/${lang}?date=${day}`}>{t.back}</Link>
           </div>
           <div className="scoreboard">
             <div className="t"><Crest team={m.home} lang={lang} large /><span>{pick(m.home.name, lang)}</span></div>

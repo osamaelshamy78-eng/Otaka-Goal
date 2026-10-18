@@ -32,12 +32,12 @@ export function LeagueChips({ lang, base, current, allowAll, query = {} }: {
   return (
     <nav className="chips" aria-label={lang === "ar" ? "البطولات" : "Competitions"}>
       {allowAll && (
-        <Link className="chip" href={href()} aria-current={current === "all"} style={{ "--lc": "var(--accent)" } as React.CSSProperties}>
+        <Link prefetch={false} className="chip" href={href()} aria-current={current === "all"} style={{ "--lc": "var(--accent)" } as React.CSSProperties}>
           <i />{t.allLeagues}
         </Link>
       )}
       {LEAGUES.map((l) => (
-        <Link key={l.key} className="chip" href={href(l.key)} aria-current={current === l.key} style={{ "--lc": l.color } as React.CSSProperties}>
+        <Link prefetch={false} key={l.key} className="chip" href={href(l.key)} aria-current={current === l.key} style={{ "--lc": l.color } as React.CSSProperties}>
           <i />{pick(l.short, lang)}
         </Link>
       ))}
@@ -53,7 +53,7 @@ export function MatchRow({ match: m, lang }: { match: Match; lang: Lang }) {
   const [h, a] = m.score ?? [0, 0];
   const done = m.status === "ft";
   return (
-    <Link className="match" href={`/${lang}/match/${m.id}`} aria-label={`${pick(m.home.name, lang)} ${t.vs} ${pick(m.away.name, lang)}`}>
+    <Link prefetch={false} className="match" href={`/${lang}/match/${m.id}`} aria-label={`${pick(m.home.name, lang)} ${t.vs} ${pick(m.away.name, lang)}`}>
       {live ? (
         <div className="state live num">{m.status === "ht" ? t.statusShort.ht : minuteLabel(m)}<small>{t.status.live}</small></div>
       ) : (

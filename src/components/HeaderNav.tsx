@@ -20,10 +20,10 @@ export function HeaderNav({ lang }: { lang: Lang }) {
     <nav className="hnav">
       <div className="views">
         {links.map((l) => (
-          <Link key={l.href} href={l.href} aria-current={l.active ? "page" : undefined}>{l.label}</Link>
+          <Link prefetch={false} key={l.href} href={l.href} aria-current={l.active ? "page" : undefined}>{l.label}</Link>
         ))}
       </div>
-      <Link className="langswitch" href={`/${other}${rest}${query ? `?${query}` : ""}`} hrefLang={other} lang={other}>
+      <Link prefetch={false} className="langswitch" href={`/${other}${rest}${query ? `?${query}` : ""}`} hrefLang={other} lang={other}>
         {t.switchLang}
       </Link>
     </nav>
