@@ -58,7 +58,8 @@ const ar = {
   goals: "الأهداف",
   season: "الموسم",
   footerSample: "الموقع شغال ببيانات تجريبية لحد ما يتضاف مفتاح API-Football. كل المواعيد بتوقيت القاهرة.",
-  footerLive: "البيانات من API-Football. كل المواعيد بتوقيت القاهرة. أزرار المشاهدة بتودّي للقنوات والمنصات الرسمية.",
+  footerLive: (src: string) => `البيانات من ${src}. كل المواعيد بتوقيت القاهرة. أزرار المشاهدة بتودّي للقنوات والمنصات الرسمية.`,
+  arabWindow: "الدوري المصري والسعودي والإماراتي متاحين لأمس والنهارده وبكرة بس في الخطة المجانية.",
 };
 
 type Dict = typeof ar;
@@ -116,7 +117,8 @@ const en: Dict = {
   goals: "Goals",
   season: "Season",
   footerSample: "The site runs on sample data until an API-Football key is added. All times are Cairo time.",
-  footerLive: "Data from API-Football. All times are Cairo time. Watch buttons link to the official broadcasters.",
+  footerLive: (src) => `Data from ${src}. All times are Cairo time. Watch buttons link to the official broadcasters.`,
+  arabWindow: "The Egyptian, Saudi and UAE leagues are only available for yesterday, today and tomorrow on the free plan.",
 };
 
 export const dict = (lang: Lang): Dict => (lang === "ar" ? ar : en);

@@ -70,7 +70,7 @@ export interface Scorer {
 }
 
 export interface DataProvider {
-  source: "sample" | "api-football";
+  source: "sample" | "api-football" | "football-data" | "mixed";
   fixtures(date: string): Promise<Match[]>;
   match(id: string): Promise<MatchDetail | null>;
   standings(league: LeagueKey): Promise<StandingRow[]>;

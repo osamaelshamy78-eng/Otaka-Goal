@@ -2,10 +2,10 @@ import { notFound } from "next/navigation";
 import { LeagueChips, MatchRow } from "@/components/bits";
 import { DayStrip } from "@/components/DayStrip";
 import { LiveRefresh } from "@/components/LiveRefresh";
-import { data, PlanLimitError } from "@/lib/data";
+import { AF_WINDOW_DAYS, arabLeaguesLimited, data, PlanLimitError } from "@/lib/data";
 import { dict, isLang, pick } from "@/lib/i18n";
 import { isLeagueKey, LEAGUES } from "@/lib/leagues";
-import { cairoToday, formatDay, parseDate } from "@/lib/time";
+import { cairoToday, daysBetween, formatDay, parseDate } from "@/lib/time";
 import type { Match } from "@/lib/types";
 
 export default async function MatchesPage({ params, searchParams }: {
@@ -46,7 +46,9 @@ export default async function MatchesPage({ params, searchParams }: {
           {date === today ? `${t.today}${lang === "ar" ? "، " : ", "}` : ""}{formatDay(date, lang)}
           <span>{kind}{matches.length ? ` · ${t.matchCount(matches.length)}` : ""}</span>
         </h1>
-        {failed ? (
+        {arabLeaguesLimited && Math.abs(daysBetween(today, date)) > AF_WINDOW_DAYS && league !== "all" && !["ucl", "epl", "laliga", "seriea"].includes(league) ? (
+          <div className="empty">{t.arabWindow}</div>
+        ) : failed ? (
           <div className="empty">{failed === "plan" ? t.planLimit : t.loadError}</div>
         ) : matches.length === 0 ? (
           <div className="empty">{t.noMatches}</div>
@@ -62,6 +64,7 @@ export default async function MatchesPage({ params, searchParams }: {
             );
           })
         )}
+        {arabLeaguesLimited && league === "all" && Math.abs(daysBetween(today, date)) > AF_WINDOW_DAYS && <p className="note">{t.arabWindow}</p>}
       </main>
       <LiveRefresh active={anyLive || startsSoon} />
     </>

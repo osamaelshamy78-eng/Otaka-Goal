@@ -55,7 +55,7 @@ export default async function LangLayout({ children, params }: { children: React
         </header>
         <div className="wrap">
           {children}
-          <footer><p>{data.source === "sample" ? t.footerSample : t.footerLive}</p></footer>
+          <footer><p>{data.source === "sample" ? t.footerSample : t.footerLive({ "api-football": "API-Football", "football-data": "football-data.org", mixed: lang === "ar" ? "football-data.org و API-Football" : "football-data.org and API-Football" }[data.source])}</p></footer>
         </div>
       </body>
     </html>
