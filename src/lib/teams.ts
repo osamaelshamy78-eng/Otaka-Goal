@@ -84,6 +84,8 @@ const AR_NAMES: Record<string, string> = {
   Copenhagen: "كوبنهاغن", "Bodø/Glimt": "بودو غليمت", "Union SG": "يونيون سان جيلواز", "Qarabağ": "قره باغ", "Dinamo Zagreb": "دينامو زغرب",
   "Crvena Zvezda": "النجم الأحمر", "Young Boys": "يونغ بويز", "Sparta Praha": "سبارتا براغ", "Slavia Praha": "سلافيا براغ", "Sturm Graz": "شتورم غراتس",
   Kairat: "كايرات", Pafos: "بافوس",
+  Shaktar: "شاختار دونيتسك", "RC Lens": "لانس", Lens: "لانس", "PAE AEK": "أيك أثينا", "AEK Athens": "أيك أثينا", "Sabah FK": "صباح", Sabah: "صباح",
+  Viking: "فايكنغ", LASK: "لاسك لينز", "Sl. Bratislava": "سلوفان براتيسلافا", "Slovan Bratislava": "سلوفان براتيسلافا",
   // Egypt
   "Al Mokawloon": "المقاولون العرب", "Arab Contractors": "المقاولون العرب", ENPPI: "إنبي", "Ghazl El Mahalla": "غزل المحلة", "Haras El Hodood": "حرس الحدود",
   "El Gouna": "الجونة", Pharco: "فاركو", "National Bank of Egypt": "البنك الأهلي", "Modern Sport": "مودرن سبورت", Petrojet: "بتروجت",
