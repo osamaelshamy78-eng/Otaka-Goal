@@ -25,6 +25,11 @@ export function daysBetween(from: string, to: string): number {
   return Math.round((atNoonUTC(to).getTime() - atNoonUTC(from).getTime()) / 864e5);
 }
 
+// Days the site serves: about a season either side of today. Anything further
+// out never reaches the data providers.
+export const DATE_RANGE_DAYS = 370;
+export const inServedRange = (date: string, today: string) => Math.abs(daysBetween(today, date)) <= DATE_RANGE_DAYS;
+
 export const weekday = (iso: string) => atNoonUTC(iso).getUTCDay(); // 0 = Sunday
 
 // Cairo's UTC offset on a given day, e.g. "+03:00" (Egypt observes summer time).

@@ -5,8 +5,17 @@ import { LiveRefresh } from "@/components/LiveRefresh";
 import { AF_WINDOW_DAYS, arabLeaguesLimited, data, PlanLimitError } from "@/lib/data";
 import { dict, isLang, pick } from "@/lib/i18n";
 import { isLeagueKey, LEAGUES } from "@/lib/leagues";
-import { cairoToday, daysBetween, formatDay, parseDate } from "@/lib/time";
+import type { Metadata } from "next";
+import { cairoToday, daysBetween, formatDay, inServedRange, parseDate } from "@/lib/time";
 import type { Match } from "@/lib/types";
+
+type Props = { params: Promise<{ lang: string }>; searchParams: Promise<{ date?: string; league?: string }> };
+
+// Each date and filter is its own page; keep only the default view in search results.
+export async function generateMetadata({ searchParams }: Props): Promise<Metadata> {
+  const sp = await searchParams;
+  return sp.date || sp.league ? { robots: { index: false, follow: false } } : {};
+}
 
 export default async function MatchesPage({ params, searchParams }: {
   params: Promise<{ lang: string }>;
@@ -18,11 +27,12 @@ export default async function MatchesPage({ params, searchParams }: {
   const t = dict(lang);
   const today = cairoToday();
   const date = parseDate(sp.date) ?? today;
+  const inRange = inServedRange(date, today);
   const league = isLeagueKey(sp.league) ? sp.league : "all";
 
   let matches: Match[] = [];
   let failed: false | "error" | "plan" = false;
-  try {
+  if (inRange) try {
     matches = (await data.fixtures(date)).filter((m) => league === "all" || m.league === league);
   } catch (err) {
     if (err instanceof PlanLimitError) failed = "plan";
@@ -46,7 +56,9 @@ export default async function MatchesPage({ params, searchParams }: {
           {date === today ? `${t.today}${lang === "ar" ? "، " : ", "}` : ""}{formatDay(date, lang)}
           <span>{kind}{matches.length ? ` · ${t.matchCount(matches.length)}` : ""}</span>
         </h1>
-        {arabLeaguesLimited && Math.abs(daysBetween(today, date)) > AF_WINDOW_DAYS && league !== "all" && !["ucl", "epl", "laliga", "seriea"].includes(league) ? (
+        {!inRange ? (
+          <div className="empty">{t.outOfRange}</div>
+        ) : arabLeaguesLimited && Math.abs(daysBetween(today, date)) > AF_WINDOW_DAYS && league !== "all" && !["ucl", "epl", "laliga", "seriea"].includes(league) ? (
           <div className="empty">{t.arabWindow}</div>
         ) : failed ? (
           <div className="empty">{failed === "plan" ? t.planLimit : t.loadError}</div>
@@ -64,7 +76,9 @@ export default async function MatchesPage({ params, searchParams }: {
             );
           })
         )}
-        {arabLeaguesLimited && league === "all" && Math.abs(daysBetween(today, date)) > AF_WINDOW_DAYS && <p className="note">{t.arabWindow}</p>}
+        {!inRange ? (
+          <div className="empty">{t.outOfRange}</div>
+        ) : arabLeaguesLimited && league === "all" && Math.abs(daysBetween(today, date)) > AF_WINDOW_DAYS && <p className="note">{t.arabWindow}</p>}
       </main>
       <LiveRefresh active={anyLive || startsSoon} />
     </>

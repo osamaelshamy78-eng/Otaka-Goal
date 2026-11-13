@@ -86,7 +86,7 @@ export const footballData: DataProvider = {
   async fixtures(date) {
     // utcDate is UTC, so ask for the neighbouring days and keep the ones that fall on `date` in Cairo
     const today = cairoToday();
-    const ttl = date === today ? 60 : date < today ? 3600 : 900;
+    const ttl = date === today ? 60 : date < addDays(today, -2) ? 86400 : date < today ? 3600 : date > addDays(today, 7) ? 21600 : 900;
     const res = await get<{ matches: FdMatch[] }>(
       `/matches?competitions=${Object.values(CODES).join(",")}&dateFrom=${addDays(date, -1)}&dateTo=${addDays(date, 1)}`,
       ttl,

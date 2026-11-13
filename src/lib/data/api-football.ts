@@ -1,7 +1,7 @@
 import { unstable_cache } from "next/cache";
 import { leagueByApiId, leagueByKey } from "../leagues";
 import { arabicName, knownTeam } from "../teams";
-import { cairoToday, seasonFor, TZ } from "../time";
+import { addDays, cairoToday, seasonFor, TZ } from "../time";
 import type { DataProvider, EventType, MatchDetail, Match, MatchEvent, MatchStat, Status, StatKey, Team } from "../types";
 
 // https://www.api-football.com/documentation-v3
@@ -94,7 +94,7 @@ const STAT_TYPES: Record<string, StatKey> = {
 // Live data refreshes often; finished days rarely change.
 const ttlFor = (date: string) => {
   const today = cairoToday();
-  return date === today ? 30 : date < today ? 3600 : 900;
+  return date === today ? 30 : date < addDays(today, -2) ? 86400 : date < today ? 3600 : 900;
 };
 
 export const apiFootball: DataProvider = {
