@@ -36,6 +36,10 @@ async function request(path: string, query: string): Promise<unknown[]> {
     limiter.block(60);
     throw new RateLimitError(`API-Football ${path}: ${errors.join("; ")}`);
   }
+  if (errors.some((e) => /suspended/i.test(e))) {
+    limiter.block(3600);
+    throw new RateLimitError(`API-Football ${path}: ${errors.join("; ")}`);
+  }
   if (errors.some((e) => /limit for the day/i.test(e))) {
     limiter.block(3600);
     throw new RateLimitError(`API-Football ${path}: ${errors.join("; ")}`);
