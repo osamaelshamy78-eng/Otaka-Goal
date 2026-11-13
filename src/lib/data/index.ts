@@ -24,9 +24,11 @@ const mixed: DataProvider = {
       footballData.fixtures(date),
       inAfWindow(date) ? apiFootball.fixtures(date).then((ms) => ms.filter((m) => !isEuropean(m))) : Promise.resolve([] as Match[]),
     ]);
-    if (eu.status === "rejected" && rest.status === "rejected") throw eu.reason;
-    if (eu.status === "rejected") console.error(eu.reason);
-    if (rest.status === "rejected" && !(rest.reason instanceof PlanLimitError)) console.error(rest.reason);
+    for (const r of [eu, rest]) if (r.status === "rejected") console.error(r.reason instanceof Error ? r.reason.message : r.reason);
+    if (eu.status === "rejected" && rest.status === "rejected") {
+      // a passing limit is worth a retry; report it ahead of a plan restriction
+      throw eu.reason instanceof PlanLimitError ? rest.reason : eu.reason;
+    }
     return [...(eu.status === "fulfilled" ? eu.value : []), ...(rest.status === "fulfilled" ? rest.value : [])];
   },
   match: (id) => (id.startsWith("f-") ? footballData.match(id) : apiFootball.match(id)),

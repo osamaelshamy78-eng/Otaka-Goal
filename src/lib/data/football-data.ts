@@ -3,6 +3,7 @@ import { arabicName, knownTeam } from "../teams";
 import { addDays, cairoToday, kickoffDate } from "../time";
 import type { DataProvider, LeagueKey, Match, MatchDetail, MatchEvent, Status, Team } from "../types";
 import { PlanLimitError } from "./api-football";
+import { RateLimitError, throttle } from "./throttle";
 
 // https://docs.football-data.org — the free tier covers these four competitions.
 const BASE = "https://api.football-data.org/v4";
@@ -26,10 +27,16 @@ interface FdMatch {
   bookings?: { minute: number; team: { id: number }; player?: { name: string } | null; card: string }[];
 }
 
+const limiter = throttle("football-data.org");
+
 async function request(path: string): Promise<unknown> {
   const key = process.env.FOOTBALL_DATA_KEY;
   if (!key) throw new Error("FOOTBALL_DATA_KEY is not set");
   const res = await fetch(`${BASE}${path}`, { headers: { "X-Auth-Token": key }, cache: "no-store" });
+  if (res.status === 429) {
+    limiter.block(Number(res.headers.get("X-RequestCounter-Reset")) || 60);
+    throw new RateLimitError(`football-data.org ${path} responded 429`);
+  }
   if (res.status === 403) throw new PlanLimitError(`football-data.org ${path}: not included in this plan`);
   if (!res.ok) throw new Error(`football-data.org ${path} responded ${res.status}`);
   return res.json();
@@ -37,7 +44,7 @@ async function request(path: string): Promise<unknown> {
 
 // Cache successful responses only; the free tier allows 10 requests a minute.
 async function get<T>(path: string, revalidate: number): Promise<T> {
-  return (await unstable_cache(() => request(path), ["football-data", path], { revalidate })()) as T;
+  return (await unstable_cache(() => limiter.run(path, () => request(path)), ["football-data", path], { revalidate })()) as T;
 }
 
 function toTeam(t: FdTeam): Team {

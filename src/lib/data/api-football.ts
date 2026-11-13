@@ -2,6 +2,7 @@ import { unstable_cache } from "next/cache";
 import { leagueByApiId, leagueByKey } from "../leagues";
 import { arabicName, knownTeam } from "../teams";
 import { addDays, cairoToday, seasonFor, TZ } from "../time";
+import { RateLimitError, throttle } from "./throttle";
 import type { DataProvider, EventType, MatchDetail, Match, MatchEvent, MatchStat, Status, StatKey, Team } from "../types";
 
 // https://www.api-football.com/documentation-v3
@@ -20,6 +21,8 @@ interface ApiFixture {
 // The plan doesn't cover this request (e.g. the free plan only serves past seasons).
 export class PlanLimitError extends Error {}
 
+const limiter = throttle("API-Football");
+
 async function request(path: string, query: string): Promise<unknown[]> {
   const key = process.env.API_FOOTBALL_KEY;
   if (!key) throw new Error("API_FOOTBALL_KEY is not set");
@@ -29,6 +32,14 @@ async function request(path: string, query: string): Promise<unknown[]> {
   // the API reports quota and plan errors in the body with a 200 status
   const errors = body.errors && typeof body.errors === "object" ? Object.values(body.errors).map(String) : [];
   if (errors.some((e) => /do not have access/i.test(e))) throw new PlanLimitError(errors.join("; "));
+  if (errors.some((e) => /too many requests/i.test(e))) {
+    limiter.block(60);
+    throw new RateLimitError(`API-Football ${path}: ${errors.join("; ")}`);
+  }
+  if (errors.some((e) => /limit for the day/i.test(e))) {
+    limiter.block(3600);
+    throw new RateLimitError(`API-Football ${path}: ${errors.join("; ")}`);
+  }
   if (errors.length) throw new Error(`API-Football ${path}: ${errors.join("; ")}`);
   return body.response;
 }
@@ -37,7 +48,7 @@ async function request(path: string, query: string): Promise<unknown[]> {
 // rate-limit hit doesn't stick. The free plan allows 10 requests a minute.
 async function get<T>(path: string, params: Record<string, string | number>, revalidate: number): Promise<T[]> {
   const query = new URLSearchParams(Object.entries(params).map(([k, v]) => [k, String(v)])).toString();
-  const cached = unstable_cache(() => request(path, query), ["api-football", path, query], { revalidate });
+  const cached = unstable_cache(() => limiter.run(`${path}?${query}`, () => request(path, query)), ["api-football", path, query], { revalidate });
   return (await cached()) as T[];
 }
 
