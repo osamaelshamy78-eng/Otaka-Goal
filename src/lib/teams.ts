@@ -40,7 +40,7 @@ const ROWS: Row[] = [
   ["HIL", "الهلال", "Al Hilal", "#005EB8", "#fff", ["Al-Hilal Saudi FC", "Al-Hilal"]],
   ["NAS", "النصر", "Al Nassr", "#FFD100", "#0B2A5B", ["Al-Nassr"]],
   ["ITT", "الاتحاد", "Al Ittihad", "#F7D117", "#111", ["Al-Ittihad FC", "Al-Ittihad"]],
-  ["AHS", "الأهلي السعودي", "Al Ahli Saudi", "#006A3B", "#fff", ["Al-Ahli Jeddah", "Al Ahli Jeddah"]],
+  ["AHS", "الأهلي السعودي", "Al Ahli Saudi", "#006A3B", "#fff", ["Al-Ahli Jeddah", "Al Ahli Jeddah", "Al Ahli"]],
   ["QAD", "القادسية", "Al Qadsiah", "#C8102E", "#F2C94C", ["Al-Qadisiyah FC", "Al Qadisiyah"]],
   ["TAA", "التعاون", "Al Taawoun", "#F6C700", "#1A1A1A", ["Al-Taawoun"]],
   ["ETT", "الاتفاق", "Al Ettifaq", "#1B7F3A", "#E53935", ["Al-Ettifaq"]],
@@ -85,14 +85,14 @@ const AR_NAMES: Record<string, string> = {
   "Crvena Zvezda": "النجم الأحمر", "Young Boys": "يونغ بويز", "Sparta Praha": "سبارتا براغ", "Slavia Praha": "سلافيا براغ", "Sturm Graz": "شتورم غراتس",
   Kairat: "كايرات", Pafos: "بافوس",
   Shaktar: "شاختار دونيتسك", "RC Lens": "لانس", Lens: "لانس", "PAE AEK": "أيك أثينا", "AEK Athens": "أيك أثينا", "Sabah FK": "صباح", Sabah: "صباح",
-  Viking: "فايكنغ", LASK: "لاسك لينز", "Sl. Bratislava": "سلوفان براتيسلافا", "Slovan Bratislava": "سلوفان براتيسلافا",
+  Viking: "فايكنغ", "Viking FK": "فايكنغ", "LASK Linz": "لاسك لينز", "Bodo/Glimt": "بودو غليمت", "Slavia Prague": "سلافيا براغ", "Al Diriyah": "الدرعية", Abha: "أبها", LASK: "لاسك لينز", "Sl. Bratislava": "سلوفان براتيسلافا", "Slovan Bratislava": "سلوفان براتيسلافا",
   // Egypt
   "Al Mokawloon": "المقاولون العرب", "Arab Contractors": "المقاولون العرب", ENPPI: "إنبي", "Ghazl El Mahalla": "غزل المحلة", "Haras El Hodood": "حرس الحدود",
   "El Gouna": "الجونة", Pharco: "فاركو", "National Bank of Egypt": "البنك الأهلي", "Modern Sport": "مودرن سبورت", Petrojet: "بتروجت",
   "Tala'ea El Gaish": "طلائع الجيش", "Talaea El Gaish": "طلائع الجيش", "Wadi Degla": "وادي دجلة", "Ittihad Alexandria": "الاتحاد السكندري",
   "Al Ittihad Alexandria": "الاتحاد السكندري", "Kahraba Ismailia": "كهرباء الإسماعيلية", "El Mokawloon El Arab": "المقاولون العرب",
   // Saudi Arabia
-  "Al Fateh": "الفتح", "Al Fayha": "الفيحاء", "Al Khaleej": "الخليج", "Al Riyadh": "الرياض", "Al Okhdood": "الأخدود", Damac: "ضمك",
+  "Al Fateh": "الفتح", "Al Faisaly": "الفيصلي", "Al Fayha": "الفيحاء", "Al Khaleej": "الخليج", "Al Riyadh": "الرياض", "Al Okhdood": "الأخدود", Damac: "ضمك",
   "Al Kholood": "الخلود", "Al Hazem": "الحزم", "Al Najma": "النجمة", NEOM: "نيوم", "Al Raed": "الرائد", "Al Wehda": "الوحدة", "Al Feiha": "الفيحاء",
   // UAE
   Ajman: "عجمان", Kalba: "كلباء", "Ittihad Kalba": "اتحاد كلباء", "Khor Fakkan": "خورفكان", "Al Bataeh": "البطائح", "Al Dhafra": "الظفرة",

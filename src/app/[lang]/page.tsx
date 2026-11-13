@@ -2,7 +2,7 @@ import { notFound } from "next/navigation";
 import { LeagueChips, MatchRow } from "@/components/bits";
 import { DayStrip } from "@/components/DayStrip";
 import { LiveRefresh } from "@/components/LiveRefresh";
-import { AF_WINDOW_DAYS, arabLeaguesLimited, data, PlanLimitError } from "@/lib/data";
+import { AF_WINDOW_DAYS, data, LIMITED_LEAGUES, PlanLimitError } from "@/lib/data";
 import { dict, isLang, pick } from "@/lib/i18n";
 import { isLeagueKey, LEAGUES } from "@/lib/leagues";
 import type { Metadata } from "next";
@@ -58,7 +58,7 @@ export default async function MatchesPage({ params, searchParams }: {
         </h1>
         {!inRange ? (
           <div className="empty">{t.outOfRange}</div>
-        ) : arabLeaguesLimited && Math.abs(daysBetween(today, date)) > AF_WINDOW_DAYS && league !== "all" && !["ucl", "epl", "laliga", "seriea"].includes(league) ? (
+        ) : Math.abs(daysBetween(today, date)) > AF_WINDOW_DAYS && league !== "all" && LIMITED_LEAGUES.includes(league) ? (
           <div className="empty">{t.arabWindow}</div>
         ) : failed ? (
           <div className="empty">{failed === "plan" ? t.planLimit : t.loadError}</div>
@@ -78,7 +78,7 @@ export default async function MatchesPage({ params, searchParams }: {
         )}
         {!inRange ? (
           <div className="empty">{t.outOfRange}</div>
-        ) : arabLeaguesLimited && league === "all" && Math.abs(daysBetween(today, date)) > AF_WINDOW_DAYS && <p className="note">{t.arabWindow}</p>}
+        ) : league === "all" && Math.abs(daysBetween(today, date)) > AF_WINDOW_DAYS && <p className="note">{t.arabWindow}</p>}
       </main>
       <LiveRefresh active={anyLive || startsSoon} />
     </>

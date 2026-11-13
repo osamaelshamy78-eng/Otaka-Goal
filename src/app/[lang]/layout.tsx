@@ -4,7 +4,7 @@ import { notFound } from "next/navigation";
 import { Suspense } from "react";
 import { HeaderNav } from "@/components/HeaderNav";
 import { Logo } from "@/components/Logo";
-import { data } from "@/lib/data";
+import { data, sourceLabel } from "@/lib/data";
 import { dict, dir, isLang, LANGS } from "@/lib/i18n";
 import { cairoToday } from "@/lib/time";
 import "../globals.css";
@@ -55,7 +55,7 @@ export default async function LangLayout({ children, params }: { children: React
         </header>
         <div className="wrap">
           {children}
-          <footer><p>{data.source === "sample" ? t.footerSample : t.footerLive({ "api-football": "API-Football", "football-data": "football-data.org", mixed: lang === "ar" ? "football-data.org و API-Football" : "football-data.org and API-Football" }[data.source])}</p></footer>
+          <footer><p>{data.source === "sample" ? t.footerSample : t.footerLive(sourceLabel(lang))}</p></footer>
         </div>
       </body>
     </html>
